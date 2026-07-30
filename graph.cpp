@@ -77,11 +77,16 @@ void Graph::print(string filename)
 {
 	ofstream out(filename);
 	for (int v = 0 ; v < V ; v++) {
-		out  << v << " " ;
+		
 		for (int w : adj[v])
+		{
+			out  << v << " ";
 			out << w <<" ";
-		out << endl;
+			out << endl;
+		}
 	}
+
+	 
 }
 
 // The complement of a graph G is a graph GC
@@ -253,16 +258,16 @@ int main() {
 	float densities [6] = {.25f,.2f,.3f,.5f,.75f,.85f};
 	string densitiesStrings [6]= {"25%","20%","30%", "50%", "75%", "85%"};
 	pair<int, int > sizeRange[] = {
-		// {10,30},
-		// {30,100},
-		// // {100,300},
+		//  {10,30},
+		//  {30,100},
+		//  {100,300},
 		// {300,600},
 		//  {600,1000},
 		 {1000,10000},
-		// {10000,30000}
+		{10000,30000}
 	};
 
-	for (int i= 0; i < 1; i++)
+	for (int i= 0; i < 2; i++)
 	{
 		int min= sizeRange[i].first ; int max= sizeRange[i].second;
 
