@@ -9,6 +9,7 @@
 #include <string>
 #include <utility>
 #include <filesystem>
+#include <algorithm>
 using namespace std;
 
 #define WHITE 1
@@ -257,6 +258,7 @@ int main() {
 	// i need array of pairs of graph size [x,y]
 	float densities [6] = {.25f,.2f,.3f,.5f,.75f,.85f};
 	string densitiesStrings [6]= {"25%","20%","30%", "50%", "75%", "85%"};
+	// size range for the random graphs we want i comment out some ranges because of computaion complexity of generating such sizes also check the loop size before run 
 	pair<int, int > sizeRange[] = {
 		//  {10,30},
 		//  {30,100},
@@ -286,19 +288,37 @@ int main() {
 				int EdgesNum = density * (GraphSize * (GraphSize-1)/2);
 
 				Graph g(GraphSize);
-				//cout << "random  " << GraphSize;
+				
 
-				uniform_int_distribution<int> edgeIndex(0, GraphSize - 1); 
-				for (int m = 0; m < EdgesNum; m++) {
-					int from, to;
-					
-					do {
-						from = edgeIndex(gen);
-						to = edgeIndex(gen); 
-					} while (from == to || g.has_edge(from, to));
+				vector<pair<int, int>> possibleEdges;
 
-					g.add_edge(from, to);
+				for (int i = 0; i < GraphSize; i++)
+				{
+					for (int j = i+1; j < GraphSize; j++)
+					{
+						possibleEdges.push_back({i,j});
+					}
 				}
+
+				shuffle(possibleEdges.begin(), possibleEdges.end(), gen);
+
+				for (int i = 0 ; i < EdgesNum; i++)
+				{
+					g.add_edge(possibleEdges[i].first, possibleEdges[i].second);
+				}
+				// // generates a G(n,m) random graph with exactlly edgenum unique edges 
+				// uniform_int_distribution<int> edgeIndex(0, GraphSize - 1); 
+				// for (int m = 0; m < EdgesNum; m++) {
+				// 	int from, to;
+					
+					
+				// 	do {
+				// 		from = edgeIndex(gen);
+				// 		to = edgeIndex(gen); 
+				// 	} while (from == to || g.has_edge(from, to));
+
+				// 	g.add_edge(from, to);
+				// }
 
 				// cout << "Graph: " << endl;
 
