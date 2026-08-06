@@ -43,7 +43,6 @@ void bronKerbosch(VertexSet R, VertexSet P, VertexSet X, int depth)
     if (P.empty() && X.empty())
     {
         //maximumClique.assign(R.begin(), R.end());
-        #pragma omp atomic
         ++maximalCount;
     }
 
@@ -55,23 +54,14 @@ void bronKerbosch(VertexSet R, VertexSet P, VertexSet X, int depth)
         newR.insert(v);
         VertexSet newP = IntersectSets(graph[v], P);
         VertexSet newX = IntersectSets(graph[v], X);
-        if (depth < 2 && newP.size() > 50)
-        {
-            #pragma omp task firstprivate(newR,newP,newX, depth)
-            {
-                bronKerbosch(newR, newP, newX, depth + 1);
+        
+        bronKerbosch(newR, newP, newX, depth + 1);
 
-            }
-        }
-        else
-        {
-            bronKerbosch(newR, newP, newX, depth + 1);
-        }
+         
         P.erase(v);
         X.insert(v);
 
     }
-    #pragma omp taskwait
 
 }
 
@@ -154,17 +144,17 @@ int main()
 
 
 
-    vector<Task> tasks = createTopLevelTasks(n);
-    // VertexSet R;
-    // VertexSet P;
-    // VertexSet X;
+    //vector<Task> tasks = createTopLevelTasks(n);
+    VertexSet R;
+    VertexSet P;
+    VertexSet X;
 
-    // for (int i = 0 ; i < n; i++)
-    // {
-    //     P.insert(i);
-    // }
+    for (int i = 0 ; i < n; i++)
+    {
+        P.insert(i);
+    }
 
-    //bronKerbosch(R, P, X);
+    bronKerbosch(R, P, X,0);
 
     // #pragma omp parallel for schedule(dynamic)
     // for (int i = 0; i < static_cast<int>(tasks.size()); i++)
@@ -172,20 +162,7 @@ int main()
     //     bronKerbosch(tasks[i].R, tasks[i].P, tasks[i].X, 0);
     // }
     //
-    #pragma omp parallel
-    {
-        #pragma omp single
-        {
-            for (const Task& task : tasks)
-            {
-                #pragma omp task firstprivate(task)
-                {
-                    bronKerbosch(task.R, task.P, task.X, 0);
-                }
-            }
-            #pragma omp taskwait
-        }
-    }
+    
     cout << maximalCount << "****" << endl;
 
 
