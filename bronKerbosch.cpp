@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include <vector>
 using namespace std;
+namespace fs = std::filesystem;
 
 
 using VertexSet = unordered_set<int>;
@@ -66,7 +67,7 @@ void bronKerbosch(VertexSet R, VertexSet P, VertexSet X, int depth, ofstream& ou
     {
         VertexSet newR = R;
         newR.insert(v);
-        
+
         VertexSet newP = IntersectSets(graph[v], P);
         VertexSet newX = IntersectSets(graph[v], X);
         if (depth < 2 && newP.size() > 50)
@@ -119,11 +120,64 @@ vector<Task> createTopLevelTasks(int graphSize)
 
 int main()
 {
-    string filePath = "7_87_75%.txt";
+
+    fs::path graphsFolder = "graphs";
+
+        for (const auto& subfolder : fs::directory_iterator(graphsFolder))
+        {
+            // Only process folders
+            if (!subfolder.is_directory())
+                continue;
+
+            fs::path subfolderPath = subfolder.path();
+
+            // Get folder name
+            std::string folderName = subfolderPath.filename().string();
+
+            // Ignore folders we already created
+            // if (folderName.ends_with("_maximalClique"))
+            //     continue;
+
+            std::cout << "Folder: " << folderName << "\n";
+
+            // graphs/small_maximalClique
+            fs::path outputFolder =
+                graphsFolder / (folderName + "_maximalClique");
+
+            fs::create_directories(outputFolder);
+
+            // Go through files inside small/, medium/, etc.
+            for (const auto& file : fs::directory_iterator(subfolderPath))
+            {
+                if (!file.is_regular_file())
+                    continue;
+
+                // Only .txt files
+                if (file.path().extension() != ".txt")
+                    continue;
+
+                // graph1.txt
+                std::string fileName =
+                    file.path().filename().string();
+
+                // graph1
+                std::string fileStem =
+                    file.path().stem().string();
+
+                std::cout << "    File: " << fileName << "\n";
+                std::cout << "    Name without .txt: "
+                          << fileStem << "\n";
+
+
+
+                
+                fs::path outputFile =
+                    outputFolder / (fileStem + "_MaximalCliques.txt");
+    // string filePath = "7_87_75%.txt";
 
     // Get only the filename without its extension:
     // graphs/1_100_25.txt -> 1_100_25
-    string filename = filesystem::path(filePath).stem().string();
+    // string filename = filesystem::path(filePath).stem().string();
 
     int id;
     int graphSize;
@@ -132,7 +186,7 @@ int main()
     char underscore1;
     char underscore2;
 
-    stringstream parser(filename);
+    stringstream parser(fileStem);
 
     parser >> id
             >> underscore1
@@ -150,7 +204,7 @@ int main()
 
 
     ////////////////////////////////////////////////////////////////////
-    ifstream inputFile("7_87_75%.txt");
+    ifstream inputFile(file.path());
     int n = graphSize;
     if (!inputFile)
     {
@@ -186,11 +240,11 @@ int main()
     //     bronKerbosch(tasks[i].R, tasks[i].P, tasks[i].X, 0);
     // }
     //
-    std::filesystem::path path(filePath);
-    string fileName = path.stem().string(); 
-    string folder = fileName+ "_MaximalCliques";
-	std::filesystem::create_directories(folder);
-	ofstream out(folder + "/" + fileName + "_MaximalCliques");
+ //    std::filesystem::path path(filePath);
+ //    string fileName = path.stem().string();
+ //    string folder = fileName+ "_MaximalCliques";
+	// std::filesystem::create_directories(folder);
+	ofstream out(outputFile);
 
 	long maximumClique = 0;
     #pragma omp parallel
@@ -218,5 +272,6 @@ int main()
     }
 
 
-
+            }
+        }
 }
