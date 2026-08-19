@@ -164,9 +164,9 @@ int main()
                 std::string fileStem =
                     file.path().stem().string();
 
-                std::cout << "    File: " << fileName << "\n";
-                std::cout << "    Name without .txt: "
-                          << fileStem << "\n";
+                // std::cout << "    File: " << fileName << "\n";
+                // std::cout << "    Name without .txt: "
+                //           << fileStem << "\n";
 
 
 
