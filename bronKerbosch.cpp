@@ -170,7 +170,7 @@ int main()
 
 
 
-                
+
                 fs::path outputFile =
                     outputFolder / (fileStem + "_MaximalCliques.txt");
     // string filePath = "7_87_75%.txt";
@@ -261,8 +261,8 @@ int main()
             #pragma omp taskwait
         }
     }
-    cout << maximalCount <<endl;
-    cout << maximumClique << endl;
+    cout << "maximalCount: " << maximalCount <<endl;
+    out << "maximumClique: "<<maximumClique << endl;
     for (VertexSet i : cliques){
         for (int j : i)
         {
