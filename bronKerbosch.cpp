@@ -13,6 +13,7 @@ using VertexSet = unordered_set<int>;
 int maximalCount = 0;
 vector<VertexSet> graph;
 vector<int> maximumClique;
+vector<VertexSet> cliques;
 
 
 
@@ -38,13 +39,25 @@ VertexSet IntersectSets(VertexSet &first, VertexSet &Second)
 }
 
 
-void bronKerbosch(VertexSet R, VertexSet P, VertexSet X, int depth)
+void bronKerbosch(VertexSet R, VertexSet P, VertexSet X, int depth, ofstream& out, long &maximumClique)
 {
     if (P.empty() && X.empty())
     {
         //maximumClique.assign(R.begin(), R.end());
         #pragma omp atomic
         ++maximalCount;
+        #pragma omp critical
+        {
+            if (R.size() > maximumClique)
+            {
+                maximumClique = R.size();
+            }
+            for (int i : R)
+            {
+                out << i << " ";
+            }
+            out << "\n";
+        }
     }
 
 
@@ -53,19 +66,20 @@ void bronKerbosch(VertexSet R, VertexSet P, VertexSet X, int depth)
     {
         VertexSet newR = R;
         newR.insert(v);
+        
         VertexSet newP = IntersectSets(graph[v], P);
         VertexSet newX = IntersectSets(graph[v], X);
         if (depth < 2 && newP.size() > 50)
         {
-            #pragma omp task firstprivate(newR,newP,newX, depth)
+            #pragma omp task firstprivate(newR,newP,newX, depth) shared(out)
             {
-                bronKerbosch(newR, newP, newX, depth + 1);
+                bronKerbosch(newR, newP, newX, depth + 1, out, maximumClique);
 
             }
         }
         else
         {
-            bronKerbosch(newR, newP, newX, depth + 1);
+            bronKerbosch(newR, newP, newX, depth + 1, out, maximumClique);
         }
         P.erase(v);
         X.insert(v);
@@ -172,6 +186,13 @@ int main()
     //     bronKerbosch(tasks[i].R, tasks[i].P, tasks[i].X, 0);
     // }
     //
+    std::filesystem::path path(filePath);
+    string fileName = path.stem().string(); 
+    string folder = fileName+ "_MaximalCliques";
+	std::filesystem::create_directories(folder);
+	ofstream out(folder + "/" + fileName + "_MaximalCliques");
+
+	long maximumClique = 0;
     #pragma omp parallel
     {
         #pragma omp single
@@ -180,13 +201,21 @@ int main()
             {
                 #pragma omp task firstprivate(task)
                 {
-                    bronKerbosch(task.R, task.P, task.X, 0);
+                    bronKerbosch(task.R, task.P, task.X, 0, out, maximumClique);
                 }
             }
             #pragma omp taskwait
         }
     }
-    cout << maximalCount << "****" << endl;
+    cout << maximalCount <<endl;
+    cout << maximumClique << endl;
+    for (VertexSet i : cliques){
+        for (int j : i)
+        {
+            cout << j << " ";
+        }
+        cout  << endl;
+    }
 
 
 

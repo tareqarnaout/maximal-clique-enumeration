@@ -1,0 +1,13 @@
+[
+  {
+    "directory": "/var/home/tareq/Documents/Raghda",
+    "arguments": [
+      "/usr/bin/g++",
+      "-std=c++20",
+      "-fopenmp",
+      "-c",
+      "/var/home/tareq/Documents/Raghda/bronKerbosch.cpp"
+    ],
+    "file": "/var/home/tareq/Documents/Raghda/bronKerbosch.cpp"
+  }
+]

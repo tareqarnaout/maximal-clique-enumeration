@@ -21,7 +21,7 @@ void print_array(string label, T arr[], int size);
 
 
 // A directed graph represented as an adjacency list
-class Graph { 
+class Graph {
 public:
 	Graph(int V);
 	~Graph();
@@ -33,27 +33,27 @@ public:
 	void print(string filename);
 
 private:
-	int V;    // No. of vertices 
-	list<int> *adj; 
+	int V;    // No. of vertices
+	list<int> *adj;
 
-	void DFT(int color[], int parent[], int d[], 
+	void DFT(int color[], int parent[], int d[],
 		     int f[],     int& time,    int u);
 };
 
-Graph::Graph(int V)	
-{ 
-    this->V = V; 
-    adj = new list<int>[V]; 
+Graph::Graph(int V)
+{
+    this->V = V;
+    adj = new list<int>[V];
     // adj[i] has a list of vertices adjacent to i
     // i.e. there is an edge in the graph from i
     // to that vertex.
-} 
+}
 
-Graph::~Graph() { delete [] adj; }  
+Graph::~Graph() { delete [] adj; }
 
 
 // This function assumes that the graph is directed
-void Graph::add_edge(int u, int w) 
+void Graph::add_edge(int u, int w)
 {
 	// disallow parallel edges
 	if (has_edge(u, w))
@@ -69,7 +69,7 @@ void Graph::add_edge(int u, int w)
 bool Graph::has_edge(int u, int w)
 {
 	for (int v : adj[u])
-		if (v == w) 
+		if (v == w)
 			return true;
 	return false;
 }
@@ -78,7 +78,7 @@ void Graph::print(string filename)
 {
 	ofstream out(filename);
 	for (int v = 0 ; v < V ; v++) {
-		
+
 		for (int w : adj[v])
 		{
 			out  << v << " ";
@@ -87,7 +87,7 @@ void Graph::print(string filename)
 		}
 	}
 
-	 
+
 }
 
 // The complement of a graph G is a graph GC
@@ -97,7 +97,7 @@ void Graph::print(string filename)
 Graph* Graph::complement()
 {
 	Graph* gc = new Graph(V);
-	
+
 	for (int u = 0; u < V; u++)
 		for (int w = 0; w < V; w++)
 		if (!has_edge(u, w) && (u != w))
@@ -105,7 +105,7 @@ Graph* Graph::complement()
 	return gc;
 
 }
- 
+
 // Traverses the graph level-by-level.
 // computes the shortest path in an unweighted graph.
 // Running time = O(E+V)
@@ -117,21 +117,21 @@ Graph* Graph::complement()
 //		This happens if the graph is connected
 //      and is complete. In this case, every
 //      vertex attempts to add every other vertex.
-void Graph::BFT(int source){	
+void Graph::BFT(int source){
 	bool* marked = new bool[V];
 	int* parent  = new int[V];
 	int* dist    = new int[V]; //distance
 
 	for (int u = 0; u < V; u++){
-		marked[u] = false;  
+		marked[u] = false;
 		parent[u] = -1;
 		dist[u]   = INT_MAX;
 	}
 
-	marked[source] = true; 
+	marked[source] = true;
 	dist[source]   = 0;
 
-	queue<int> q; 
+	queue<int> q;
 	q.push(source);
 
 	while(!q.empty()){
@@ -167,11 +167,11 @@ void Graph::BFT(int source){
 // Running Time = Theta(E + V)
 // All edges and vertices must be seen.
 //
-// If E = 0, the running time becomes 
-// Theta(V + 0) = Theta(V) because all the 
+// If E = 0, the running time becomes
+// Theta(V + 0) = Theta(V) because all the
 // vertices will be seen.
-// 
-// If E = Theta(V^2), the running time becomes 
+//
+// If E = Theta(V^2), the running time becomes
 // Theta(V^2+V) = Theta(V^2) = Theta(E)
 void Graph::traverse_all(){
 	int* color  	= new int[V];
@@ -181,7 +181,7 @@ void Graph::traverse_all(){
 	int time 		= 0;
 
 	for (int u = 0; u < V; u++){
-			color[u] 	= WHITE;  
+			color[u] 	= WHITE;
 			parent[u] 	= -1;
 			finish[u]	= INT_MIN;
 			discovery[u]= INT_MIN;
@@ -208,14 +208,14 @@ void Graph::traverse_all(){
 	delete [] finish;
  }
 
-void Graph::DFT(int color[],  int parent[], int discovery[], 
+void Graph::DFT(int color[],  int parent[], int discovery[],
 				int finish[], int& time,    int source){
 	++time;
 	discovery[source]= time;
 	color[source] 	 = GRAY;
 
 	for (int v : adj[source]) {
-		if (color[v] == WHITE){	
+		if (color[v] == WHITE){
 			parent[v]= source;
 			DFT(color, parent, discovery, finish, time, v);
 		}
@@ -252,13 +252,13 @@ void Graph::DFT(int color[],  int parent[], int discovery[],
 // cout << "DFT from" in the traverse_all function.
 
 
-int main() { 
+int main() {
 	// build a random graph
-	// i need array of densities 
+	// i need array of densities
 	// i need array of pairs of graph size [x,y]
 	float densities [6] = {.25f,.2f,.3f,.5f,.75f,.85f};
 	string densitiesStrings [6]= {"25%","20%","30%", "50%", "75%", "85%"};
-	// size range for the random graphs we want i comment out some ranges because of computaion complexity of generating such sizes also check the loop size before run 
+	// size range for the random graphs we want i comment out some ranges because of computaion complexity of generating such sizes also check the loop size before run
 	pair<int, int > sizeRange[] = {
 		//  {10,30},
 		//  {30,100},
@@ -278,17 +278,17 @@ int main() {
 			float density = densities[j];
 			for (int k = 0; k < 10; k++)
 			{
-				// this uses new modern random library for better randomness 
+				// this uses new modern random library for better randomness
 				random_device rd;
-				mt19937 gen(rd());   
-				  
+				mt19937 gen(rd());
+
 				uniform_int_distribution<int> dist(min, max);
-				
+
 				int GraphSize = dist(gen);
 				int EdgesNum = density * (GraphSize * (GraphSize-1)/2);
 
 				Graph g(GraphSize);
-				
+
 
 				vector<pair<int, int>> possibleEdges;
 
@@ -306,15 +306,15 @@ int main() {
 				{
 					g.add_edge(possibleEdges[i].first, possibleEdges[i].second);
 				}
-				// // generates a G(n,m) random graph with exactlly edgenum unique edges 
-				// uniform_int_distribution<int> edgeIndex(0, GraphSize - 1); 
+				// // generates a G(n,m) random graph with exactlly edgenum unique edges
+				// uniform_int_distribution<int> edgeIndex(0, GraphSize - 1);
 				// for (int m = 0; m < EdgesNum; m++) {
 				// 	int from, to;
-					
-					
+
+
 				// 	do {
 				// 		from = edgeIndex(gen);
-				// 		to = edgeIndex(gen); 
+				// 		to = edgeIndex(gen);
 				// 	} while (from == to || g.has_edge(from, to));
 
 				// 	g.add_edge(from, to);
@@ -322,9 +322,9 @@ int main() {
 
 				// cout << "Graph: " << endl;
 
-				  std::filesystem::create_directories(to_string(sizeRange[i].first) + "-"+to_string(sizeRange[i].second));
+				 std::filesystem::create_directories(to_string(sizeRange[i].first) + "-"+to_string(sizeRange[i].second));
 
-				
+
 				g.print( to_string(sizeRange[i].first) + "-"+to_string(sizeRange[i].second)+"/"+to_string(k) + "_"+ to_string(GraphSize) + "_" + densitiesStrings[j]  + ".txt");
 
 				// cout << endl << "BFT: " << endl;
@@ -334,11 +334,11 @@ int main() {
 				// g.traverse_all();
 
 			}
-	
+
 		}
 	}
-	
-		return 0;	
+
+		return 0;
 }
 
 

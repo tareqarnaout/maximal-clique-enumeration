@@ -44,6 +44,7 @@ void bronKerbosch(VertexSet R, VertexSet P, VertexSet X, int depth)
     {
         //maximumClique.assign(R.begin(), R.end());
         ++maximalCount;
+        return;
     }
 
 
