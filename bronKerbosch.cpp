@@ -135,8 +135,8 @@ int main()
             std::string folderName = subfolderPath.filename().string();
 
             // Ignore folders we already created
-            // if (folderName.ends_with("_maximalClique"))
-            //     continue;
+            if (folderName.ends_with("_maximalClique"))
+                continue;
 
             std::cout << "Folder: " << folderName << "\n";
 
@@ -159,7 +159,7 @@ int main()
                 // graph1.txt
                 std::string fileName =
                     file.path().filename().string();
-
+                cout << "File Name : " << fileName << endl;
                 // graph1
                 std::string fileStem =
                     file.path().stem().string();
@@ -261,15 +261,9 @@ int main()
             #pragma omp taskwait
         }
     }
-    cout << "maximalCount: " << maximalCount <<endl;
+    out << "maximalCount: " << maximalCount <<endl;
     out << "maximumClique: "<<maximumClique << endl;
-    for (VertexSet i : cliques){
-        for (int j : i)
-        {
-            cout << j << " ";
-        }
-        cout  << endl;
-    }
+    
 
 
             }
